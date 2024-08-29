@@ -1,8 +1,8 @@
 # ThreeJS - Pirate Ship
 
 <p>
-    <a href="https://kristianpayne1.github.io/threejs-forest-road">
-        <img width="100%" src="https://github.com/kristianpayne1/threejs-forest-road/assets/16291096/1391f1f7-3b38-47f2-b89b-3c8ff321d50d" alt="Journey stage 1"/>
+    <a href="">
+        <img width="100%" src="" alt="ThreeJS - Pirate Ship screenshot"/>
     </a>
 </p>
 
