@@ -2,7 +2,7 @@
 
 <p>
     <a href="">
-        <img width="100%" src="" alt="ThreeJS - Pirate Ship screenshot"/>
+        <img width="100%" src="" alt="ThreeJS - Pirate Ship"/>
     </a>
 </p>
 
