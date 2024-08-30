@@ -37,6 +37,7 @@ export default function Ship({
     });
 
     return (
+        // @ts-ignore
         <group position={position} rotation={rotation} scale={scale} {...props}>
             <mesh geometry={Hull.geometry}>
                 <meshBasicMaterial map={map} />
