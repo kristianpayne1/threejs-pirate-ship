@@ -4,12 +4,12 @@ import { Color, MeshPhongMaterial, ShaderMaterial } from "three";
 import CustomShaderMaterial from "three-custom-shader-material";
 
 // shaders
-import vertexShader from "./shaders/water/vertex.glsl";
-import fragmentShader from "./shaders/water/fragment.glsl";
+import vertexShader from "../shaders/water/vertex.glsl";
+import fragmentShader from "../shaders/water/fragment.glsl";
 import { patchShaders } from "gl-noise";
 
 export default function Water() {
-    const thickness = 1;
+    const thickness = 1.0;
     const material = useRef<ShaderMaterial>();
 
     useFrame((state) => {
@@ -21,15 +21,14 @@ export default function Water() {
         <mesh
             castShadow
             receiveShadow
-            position={[1.55, 0.3, 1.75]}
             rotation-x={-Math.PI / 2}
             rotation-z={Math.PI / 4}
         >
-            <boxGeometry args={[7.8, 1.5, thickness, 40, 8, 1]} />
+            <boxGeometry args={[7, 7, thickness, 40, 40, 1]} />
             <CustomShaderMaterial
                 ref={material}
                 baseMaterial={MeshPhongMaterial}
-                vertexShader={patchShaders(vertexShader)[0]}
+                vertexShader={patchShaders(vertexShader) as string}
                 fragmentShader={fragmentShader}
                 color={new Color("#52a7f7")}
                 transparent
@@ -39,10 +38,10 @@ export default function Water() {
                 uniforms={{
                     uTime: { value: 0 },
                     waterColor: {
-                        value: new Color("#52a7f7").convertLinearToSRGB(),
+                        value: new Color("#0058aa").convertLinearToSRGB(),
                     },
                     waterHighlight: {
-                        value: new Color("#b3ffff").convertLinearToSRGB(),
+                        value: new Color("#0084ff").convertLinearToSRGB(),
                     },
                     uHeight: {
                         value: thickness,
