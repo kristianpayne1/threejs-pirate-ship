@@ -9,7 +9,7 @@ import fragmentShader from "../shaders/water/fragment.glsl";
 import { patchShaders } from "gl-noise";
 
 export default function Water() {
-    const thickness = 1.0;
+    const thickness = 0.8;
     const material = useRef<ShaderMaterial>();
 
     useFrame((state) => {
@@ -24,7 +24,7 @@ export default function Water() {
             rotation-x={-Math.PI / 2}
             rotation-z={Math.PI / 4}
         >
-            <boxGeometry args={[7, 7, thickness, 40, 40, 1]} />
+            <boxGeometry args={[8, 8, thickness, 40, 40, 1]} />
             <CustomShaderMaterial
                 ref={material}
                 baseMaterial={MeshPhongMaterial}
