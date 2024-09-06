@@ -5,11 +5,12 @@ import {
     PresentationControls,
 } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
-import { Suspense } from "react";
+import { Suspense, useRef } from "react";
 import Water from "./components/Water";
 import Ship from "./components/Ship";
 
 function App() {
+    const waterRef = useRef(null!);
     return (
         <>
             <Canvas
@@ -33,11 +34,12 @@ function App() {
                             intensity={100}
                         />
                         <Bounds fit clip margin={1}>
-                            <Water />
+                            <Water ref={waterRef} />
                             <Ship
                                 rotation={[0, -Math.PI / 4, 0]}
                                 scale={0.3}
                                 position={[0, 1, 0]}
+                                waterRef={waterRef}
                             />
                         </Bounds>
                     </PresentationControls>
