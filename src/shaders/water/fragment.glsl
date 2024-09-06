@@ -1,4 +1,5 @@
 varying float vHeight;
+varying vec2 vUv;
 
 uniform vec3 waterColor;
 uniform vec3 waterHighlight;
@@ -7,7 +8,7 @@ uniform float offset;
 
 vec3 calcColor() {
 
-  float mask = (vHeight - 0.5) * 3.1;
+  float mask = vHeight * 3.1;
 
   vec3 diffuseColor = mix(waterColor, waterHighlight, mask);
 
