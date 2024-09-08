@@ -119,7 +119,6 @@ export default forwardRef(function Water(
 
     useLayoutEffect(() => {
         if (!ref.current) return;
-        const newPosition = new Vector3();
         ref.current.readWaterLevel = (position: Vector3) => {
             const currentRenderTarget =
                 gpuCompute.getCurrentRenderTarget(heightMapVariable);
@@ -142,8 +141,7 @@ export default forwardRef(function Water(
                 readWaterLevelImage
             );
             const pixels = new Float32Array(readWaterLevelImage.buffer);
-            newPosition.set(position.x, pixels[0], position.z);
-            return newPosition;
+            return pixels[0];
         };
     }, [readWaterLevelImage, readWaterLevelRenderTarget]);
 

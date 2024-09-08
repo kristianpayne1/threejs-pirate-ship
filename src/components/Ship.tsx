@@ -42,9 +42,9 @@ export default function Ship({
 
     useFrame(() => {
         if (!waterRef.current || !groupRef.current) return;
-        groupRef.current.position.set(
-            ...waterRef.current.readWaterLevel(groupRef.current.position)
-        );
+        const position = groupRef.current.position;
+        const waterLevelHeight = waterRef.current.readWaterLevel(position);
+        groupRef.current.position.set(position.x, waterLevelHeight, position.z);
     });
 
     return (
