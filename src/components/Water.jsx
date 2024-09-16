@@ -23,13 +23,7 @@ import fragmentShader from "../shaders/water/fragment.glsl";
 import heightMapShader from "../shaders/water/heightMap.glsl";
 import readWaterLevelVertex from "../shaders/water/readWaterLevel.glsl";
 
-interface WaterProps {
-    width?: number;
-    segments?: number;
-    thickness?: number;
-}
-
-function fillTexture(texture: DataTexture, width: number) {
+function fillTexture(texture, width) {
     const pixels = texture.image.data;
 
     let p = 0;
@@ -46,10 +40,10 @@ function fillTexture(texture: DataTexture, width: number) {
 }
 
 export default forwardRef(function Water(
-    { width = 40, segments = 8, thickness = 0.8 }: WaterProps,
-    ref: any
+    { width = 40, segments = 8, thickness = 0.8 },
+    ref
 ) {
-    const material = useRef<ShaderMaterial>();
+    const material = useRef(null);
 
     const { gl: renderer } = useThree();
 
@@ -68,7 +62,7 @@ export default forwardRef(function Water(
 
         const heightMapVariable = gpuCompute.addVariable(
             "heightmap",
-            patchShaders(heightMapShader) as string,
+            patchShaders(heightMapShader),
             heightmap0
         );
 
@@ -119,7 +113,7 @@ export default forwardRef(function Water(
 
     useLayoutEffect(() => {
         if (!ref.current) return;
-        ref.current.readWaterLevel = (position: Vector3) => {
+        ref.current.readWaterLevel = (position) => {
             const currentRenderTarget =
                 gpuCompute.getCurrentRenderTarget(heightMapVariable);
             readWaterLevelShader.uniforms["levelTexture"].value =

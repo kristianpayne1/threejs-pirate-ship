@@ -3,6 +3,7 @@ import {
     ContactShadows,
     Loader,
     PresentationControls,
+    Stats,
 } from "@react-three/drei";
 import { Canvas } from "@react-three/fiber";
 import { Suspense, useRef } from "react";
@@ -10,7 +11,7 @@ import Water from "./components/Water";
 import Ship from "./components/Ship";
 
 function App() {
-    const waterRef = useRef(null!);
+    const waterRef = useRef(null);
     return (
         <>
             <Canvas
@@ -53,6 +54,7 @@ function App() {
                 <color attach="background" args={["#63d2da"]} />
             </Canvas>
             <Loader />
+            <Stats />
         </>
     );
 }
