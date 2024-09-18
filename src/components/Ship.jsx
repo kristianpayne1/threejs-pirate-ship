@@ -32,6 +32,7 @@ export default function Ship({
             position={position}
             rotation={rotation}
             scale={scale}
+            lockY
             {...props}
         >
             <mesh geometry={Hull.geometry}>
