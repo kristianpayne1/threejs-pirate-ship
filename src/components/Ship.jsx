@@ -38,12 +38,14 @@ export default function Ship({
             <mesh geometry={Hull.geometry}>
                 <meshBasicMaterial map={map} />
             </mesh>
-            <mesh ref={ref} geometry={Mast.geometry}>
-                <meshBasicMaterial map={map} />
-            </mesh>
-            <mesh geometry={Sails.geometry}>
-                <meshBasicMaterial map={map} />
-            </mesh>
+            <group position={[0, 2, 0.5]}>
+                <mesh ref={ref} geometry={Mast.geometry}>
+                    <meshBasicMaterial map={map} />
+                </mesh>
+                <mesh geometry={Sails.geometry}>
+                    <meshBasicMaterial map={map} />
+                </mesh>
+            </group>
         </BuoyantObject>
     );
 }

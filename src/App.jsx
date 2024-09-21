@@ -9,6 +9,7 @@ import { Canvas } from "@react-three/fiber";
 import { Suspense, useRef } from "react";
 import Water from "./components/Water";
 import Ship from "./components/Ship";
+import Seagull from "./components/Seagull";
 
 function App() {
     const waterRef = useRef(null);
@@ -21,7 +22,7 @@ function App() {
                 camera={{ position: [0, 45, 60], fov: 10 }}
             >
                 <Suspense fallback={null}>
-                    <ambientLight intensity={0.8} />
+                    <ambientLight intensity={2} />
                     <PresentationControls
                         global
                         zoom={0.8}
@@ -41,6 +42,11 @@ function App() {
                                 scale={0.3}
                                 position={[0, 1, 0]}
                                 waterRef={waterRef}
+                            />
+                            <Seagull
+                                position={[2.5, 5, 0]}
+                                rotation={[0, -Math.PI / 4, 0]}
+                                scale={0.04}
                             />
                         </Bounds>
                     </PresentationControls>

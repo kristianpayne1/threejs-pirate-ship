@@ -169,10 +169,10 @@ export default forwardRef(function Water(
                 flatShading
                 uniforms={{
                     waterColor: {
-                        value: new Color("#0058aa").convertLinearToSRGB(),
+                        value: new Color("#003a70").convertLinearToSRGB(),
                     },
                     waterHighlight: {
-                        value: new Color("#0084ff").convertLinearToSRGB(),
+                        value: new Color("#005aae").convertLinearToSRGB(),
                     },
                     heightmap: {
                         value: null,

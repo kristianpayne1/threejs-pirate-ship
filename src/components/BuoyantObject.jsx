@@ -80,7 +80,7 @@ export function BuoyantObject({
         plane.setFromCoplanarPoints(a, b, c);
         targetQuaternion.setFromUnitVectors(up, plane.normal);
         const yRotation = ref.current.rotation.y;
-        ref.current.quaternion.slerp(targetQuaternion, 0.001);
+        ref.current.quaternion.slerp(targetQuaternion, 0.005);
         if (lockY) ref.current.rotation.y = yRotation;
     });
 
