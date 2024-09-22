@@ -3,7 +3,7 @@ import { useEffect } from "react";
 
 export default function Seagull({ position, rotation, scale, ...props }) {
     const { scene, animations } = useGLTF("./seagull.glb");
-    const { ref, mixer, names, actions, clips } = useAnimations(animations);
+    const { ref, actions } = useAnimations(animations);
 
     useEffect(() => {
         actions?.flap.play();

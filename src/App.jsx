@@ -22,7 +22,9 @@ function App() {
                 camera={{ position: [0, 45, 60], fov: 10 }}
             >
                 <Suspense fallback={null}>
-                    <ambientLight intensity={2} />
+                    <ambientLight intensity={3} />
+                    <directionalLight position={[0, 10, -10]} intensity={2} />
+                    <spotLight position={[0, 3, -6]} intensity={100} />
                     <PresentationControls
                         global
                         zoom={0.8}
@@ -30,11 +32,6 @@ function App() {
                         polar={[-Math.PI / 4.5, Math.PI / 4.5]}
                         azimuth={[-Math.PI / 1.4, Math.PI / 2]}
                     >
-                        <pointLight
-                            position={[0, 5, -6]}
-                            rotation={[Math.PI / 6, 0, 0]}
-                            intensity={100}
-                        />
                         <Bounds fit clip margin={1}>
                             <Water ref={waterRef} />
                             <Ship

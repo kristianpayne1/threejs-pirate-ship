@@ -3,14 +3,11 @@ import { forwardRef, useLayoutEffect, useMemo, useRef } from "react";
 import {
     ClampToEdgeWrapping,
     Color,
-    DataTexture,
     MeshPhongMaterial,
     NearestFilter,
     RGBAFormat,
-    ShaderMaterial,
     UnsignedByteType,
     Vector2,
-    Vector3,
     WebGLRenderTarget,
 } from "three";
 import CustomShaderMaterial from "three-custom-shader-material";
@@ -155,7 +152,6 @@ export default forwardRef(function Water(
             receiveShadow
             rotation-x={-Math.PI / 2}
             rotation-z={Math.PI / 4}
-            ref={ref}
         >
             <boxGeometry args={[8, 8, thickness, width, width, 1]} />
             <CustomShaderMaterial
@@ -169,10 +165,10 @@ export default forwardRef(function Water(
                 flatShading
                 uniforms={{
                     waterColor: {
-                        value: new Color("#003a70").convertLinearToSRGB(),
+                        value: new Color("#001d39").convertLinearToSRGB(),
                     },
                     waterHighlight: {
-                        value: new Color("#005aae").convertLinearToSRGB(),
+                        value: new Color("#002b53").convertLinearToSRGB(),
                     },
                     heightmap: {
                         value: null,

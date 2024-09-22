@@ -22,27 +22,29 @@ function getAverageHeight(heights) {
 export function BuoyantObject({
     children,
     waterRef,
-    subdivisions = 4,
-    lockY = false,
+    boxRef,
+    subdivisionsX = 3,
+    subdivisionsY = 6,
+    lockY = true,
     ...props
 }) {
     const ref = useRef(null);
+    const _ref = boxRef ?? _ref;
 
     useFrame(() => {
-        if (!ref.current || !waterRef.current) return;
-        ref.current.updateWorldMatrix(true, false);
-        box.setFromObject(ref.current);
+        if (!_ref.current || !waterRef.current) return;
+        box.copy(_ref.current.geometry.boundingBox);
         box.getSize(boxSize);
         const heights = [];
 
         const boxMin = box.min;
         // const boxMax = box.max;
 
-        const voxelSizeX = boxSize.x / subdivisions;
-        const voxelSizeZ = boxSize.z / subdivisions;
+        const voxelSizeX = boxSize.x / subdivisionsX;
+        const voxelSizeZ = boxSize.z / subdivisionsY;
 
-        for (let i = 0; i < subdivisions; i++) {
-            for (let j = 0; j < subdivisions; j++) {
+        for (let i = 0; i < subdivisionsX; i++) {
+            for (let j = 0; j < subdivisionsY; j++) {
                 voxelMin.set(
                     boxMin.x + i * voxelSizeX,
                     boxMin.y,
@@ -60,14 +62,16 @@ export function BuoyantObject({
                     waterRef.current.readWaterLevel(center);
                 heights.push(waterLevelHeight);
 
-                if (!i && !j) a.set(center.x, waterLevelHeight, center.z);
-                else if (
-                    i === Math.round(subdivisions / 2) &&
-                    j === subdivisions - 1
-                )
+                if (!i && !j) {
+                    a.set(center.x, waterLevelHeight, center.z);
+                } else if (
+                    i === Math.round(subdivisionsX / 2) &&
+                    j === subdivisionsY - 1
+                ) {
                     b.set(center.x, waterLevelHeight, center.z);
-                else if (i === subdivisions - 1 && !j)
+                } else if (i === subdivisionsX - 1 && !j) {
                     c.set(center.x, waterLevelHeight, center.z);
+                }
             }
         }
 
@@ -80,7 +84,7 @@ export function BuoyantObject({
         plane.setFromCoplanarPoints(a, b, c);
         targetQuaternion.setFromUnitVectors(up, plane.normal);
         const yRotation = ref.current.rotation.y;
-        ref.current.quaternion.slerp(targetQuaternion, 0.005);
+        ref.current.quaternion.slerp(targetQuaternion, 0.0075);
         if (lockY) ref.current.rotation.y = yRotation;
     });
 

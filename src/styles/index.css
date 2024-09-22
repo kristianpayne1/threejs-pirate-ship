@@ -5,3 +5,7 @@ div#root {
     margin: 0;
     background-color: skyblue;
 }
+
+canvas {
+    touch-action: none;
+}
