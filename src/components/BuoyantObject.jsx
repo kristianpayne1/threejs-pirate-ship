@@ -26,6 +26,7 @@ export function BuoyantObject({
     subdivisionsX = 3,
     subdivisionsY = 6,
     lockY = true,
+    rotationInterpolation = 0.0075,
     ...props
 }) {
     const ref = useRef(null);
@@ -35,10 +36,9 @@ export function BuoyantObject({
         if (!_ref.current || !waterRef.current) return;
         box.copy(_ref.current.geometry.boundingBox);
         box.getSize(boxSize);
-        const heights = [];
+        const centers = [];
 
         const boxMin = box.min;
-        // const boxMax = box.max;
 
         const voxelSizeX = boxSize.x / subdivisionsX;
         const voxelSizeZ = boxSize.z / subdivisionsY;
@@ -58,33 +58,32 @@ export function BuoyantObject({
 
                 voxel.set(voxelMin, voxelMax);
                 voxel.getCenter(center);
-                const waterLevelHeight =
-                    waterRef.current.readWaterLevel(center);
-                heights.push(waterLevelHeight);
+                centers.push(center.clone());
 
-                if (!i && !j) {
-                    a.set(center.x, waterLevelHeight, center.z);
-                } else if (
+                if (!i && !j) a.copy(center);
+                else if (
                     i === Math.round(subdivisionsX / 2) &&
                     j === subdivisionsY - 1
-                ) {
-                    b.set(center.x, waterLevelHeight, center.z);
-                } else if (i === subdivisionsX - 1 && !j) {
-                    c.set(center.x, waterLevelHeight, center.z);
-                }
+                )
+                    b.copy(center);
+                else if (i === subdivisionsX - 1 && !j) c.copy(center);
             }
         }
 
+        const heights = waterRef.current.readWaterLevel(centers);
         ref.current.position.set(
             ref.current.position.x,
             getAverageHeight(heights),
             ref.current.position.z
         );
 
+        a.setY(heights[0]);
+        b.setY(heights[Math.round(subdivisionsX / 2) + subdivisionsY - 1]);
+        c.setY(heights[subdivisionsX - 1]);
         plane.setFromCoplanarPoints(a, b, c);
         targetQuaternion.setFromUnitVectors(up, plane.normal);
         const yRotation = ref.current.rotation.y;
-        ref.current.quaternion.slerp(targetQuaternion, 0.0075);
+        ref.current.quaternion.slerp(targetQuaternion, rotationInterpolation);
         if (lockY) ref.current.rotation.y = yRotation;
     });
 

@@ -20,6 +20,8 @@ import fragmentShader from "../shaders/water/fragment.glsl";
 import heightMapShader from "../shaders/water/heightMap.glsl";
 import readWaterLevelVertex from "../shaders/water/readWaterLevel.glsl";
 
+const emptyVec2 = new Vector2();
+
 function fillTexture(texture, width) {
     const pixels = texture.image.data;
 
@@ -37,7 +39,7 @@ function fillTexture(texture, width) {
 }
 
 export default forwardRef(function Water(
-    { width = 40, segments = 8, thickness = 0.8 },
+    { width = 40, segments = 8, thickness = 0.8, numPoints = 30 },
     ref
 ) {
     const material = useRef(null);
@@ -79,17 +81,17 @@ export default forwardRef(function Water(
         const readWaterLevelShader = gpuCompute.createShaderMaterial(
             readWaterLevelVertex,
             {
-                point1: { value: new Vector2() },
+                points: { value: [] },
                 levelTexture: { value: null },
+                numPoints: { value: numPoints },
             }
         );
         readWaterLevelShader.defines.WIDTH = width.toFixed(1);
         readWaterLevelShader.defines.BOUNDS = segments.toFixed(1);
 
-        // Create a 4x1 pixel image and a render target (Uint8, 4 channels, 1 byte per channel) to read water height and orientation
-        const readWaterLevelImage = new Uint8Array(4 * 1 * 4);
+        const readWaterLevelImage = new Uint8Array(4 * numPoints * 4);
 
-        const readWaterLevelRenderTarget = new WebGLRenderTarget(4, 1, {
+        const readWaterLevelRenderTarget = new WebGLRenderTarget(4, numPoints, {
             wrapS: ClampToEdgeWrapping,
             wrapT: ClampToEdgeWrapping,
             minFilter: NearestFilter,
@@ -106,19 +108,24 @@ export default forwardRef(function Water(
             readWaterLevelImage,
             readWaterLevelRenderTarget,
         };
-    }, [width]);
+    }, [width, segments, thickness, numPoints]);
 
     useLayoutEffect(() => {
         if (!ref.current) return;
-        ref.current.readWaterLevel = (position) => {
+        ref.current.readWaterLevel = (positions) => {
             const currentRenderTarget =
                 gpuCompute.getCurrentRenderTarget(heightMapVariable);
             readWaterLevelShader.uniforms["levelTexture"].value =
                 currentRenderTarget.texture;
 
-            const u = (0.5 * position.x) / (segments * 0.5) + 0.5;
-            const v = 1 - ((0.5 * position.z) / (segments * 0.5) + 0.5);
-            readWaterLevelShader.uniforms["point1"].value.set(u, v);
+            const points = positions.map((position) => {
+                const u = (0.5 * position.x) / (segments * 0.5) + 0.5;
+                const v = 1 - ((0.5 * position.z) / (segments * 0.5) + 0.5);
+                return new Vector2(u, v);
+            });
+            points.push(...Array(numPoints - points.length).fill(emptyVec2));
+            readWaterLevelShader.uniforms["numPoints"].value = points.length;
+            readWaterLevelShader.uniforms["points"].value = points;
             gpuCompute.doRenderTarget(
                 readWaterLevelShader,
                 readWaterLevelRenderTarget
@@ -128,11 +135,11 @@ export default forwardRef(function Water(
                 0,
                 0,
                 4,
-                1,
+                points.length,
                 readWaterLevelImage
             );
             const pixels = new Float32Array(readWaterLevelImage.buffer);
-            return pixels[0];
+            return pixels.filter((_, i) => i % 4 === 0);
         };
     }, [readWaterLevelImage, readWaterLevelRenderTarget]);
 
