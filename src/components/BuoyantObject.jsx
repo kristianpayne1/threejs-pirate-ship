@@ -14,9 +14,66 @@ const c = new Vector3();
 const plane = new Plane();
 const up = new Vector3(0, 1, 0);
 const targetQuaternion = new Quaternion();
+const targetPosition = new Vector3();
 
 function getAverageHeight(heights) {
     return heights.reduce((acc, value) => acc + value, 0) / heights.length;
+}
+
+function updatePositionRotation(
+    targetPosition,
+    targetQuaternion,
+    { _ref, waterRef, subdivisionsX, subdivisionsY }
+) {
+    box.copy(_ref.current.geometry.boundingBox);
+    box.getSize(boxSize);
+    const centers = [];
+
+    const boxMin = box.min;
+
+    const voxelSizeX = boxSize.x / subdivisionsX;
+    const voxelSizeZ = boxSize.z / subdivisionsY;
+
+    for (let i = 0; i < subdivisionsX; i++) {
+        for (let j = 0; j < subdivisionsY; j++) {
+            voxelMin.set(
+                boxMin.x + i * voxelSizeX,
+                boxMin.y,
+                boxMin.z + j * voxelSizeZ
+            );
+            voxelMax.set(
+                voxelMin.x + voxelSizeX,
+                boxMin.y,
+                voxelMin.z + voxelSizeZ
+            );
+
+            voxel.set(voxelMin, voxelMax);
+            voxel.getCenter(center);
+            centers.push(center.clone());
+
+            if (!i && !j) a.copy(center);
+            else if (
+                i === Math.round(subdivisionsX / 2) &&
+                j === subdivisionsY - 1
+            )
+                b.copy(center);
+            else if (i === subdivisionsX - 1 && !j) c.copy(center);
+        }
+    }
+
+    const heights = waterRef.current.readWaterLevel(centers);
+
+    targetPosition.set(
+        targetPosition.x,
+        getAverageHeight(heights),
+        targetPosition.z
+    );
+
+    a.setY(heights[0]);
+    b.setY(heights[Math.round(subdivisionsX / 2) + subdivisionsY - 1]);
+    c.setY(heights[subdivisionsX - 1]);
+    plane.setFromCoplanarPoints(a, b, c);
+    targetQuaternion.setFromUnitVectors(up, plane.normal);
 }
 
 export function BuoyantObject({
@@ -34,54 +91,18 @@ export function BuoyantObject({
 
     useFrame(() => {
         if (!_ref.current || !waterRef.current) return;
-        box.copy(_ref.current.geometry.boundingBox);
-        box.getSize(boxSize);
-        const centers = [];
 
-        const boxMin = box.min;
+        targetPosition.copy(ref.current.position);
 
-        const voxelSizeX = boxSize.x / subdivisionsX;
-        const voxelSizeZ = boxSize.z / subdivisionsY;
+        updatePositionRotation(targetPosition, targetQuaternion, {
+            _ref,
+            waterRef,
+            subdivisionsX,
+            subdivisionsY,
+        });
 
-        for (let i = 0; i < subdivisionsX; i++) {
-            for (let j = 0; j < subdivisionsY; j++) {
-                voxelMin.set(
-                    boxMin.x + i * voxelSizeX,
-                    boxMin.y,
-                    boxMin.z + j * voxelSizeZ
-                );
-                voxelMax.set(
-                    voxelMin.x + voxelSizeX,
-                    boxMin.y,
-                    voxelMin.z + voxelSizeZ
-                );
+        ref.current.position.copy(targetPosition);
 
-                voxel.set(voxelMin, voxelMax);
-                voxel.getCenter(center);
-                centers.push(center.clone());
-
-                if (!i && !j) a.copy(center);
-                else if (
-                    i === Math.round(subdivisionsX / 2) &&
-                    j === subdivisionsY - 1
-                )
-                    b.copy(center);
-                else if (i === subdivisionsX - 1 && !j) c.copy(center);
-            }
-        }
-
-        const heights = waterRef.current.readWaterLevel(centers);
-        ref.current.position.set(
-            ref.current.position.x,
-            getAverageHeight(heights),
-            ref.current.position.z
-        );
-
-        a.setY(heights[0]);
-        b.setY(heights[Math.round(subdivisionsX / 2) + subdivisionsY - 1]);
-        c.setY(heights[subdivisionsX - 1]);
-        plane.setFromCoplanarPoints(a, b, c);
-        targetQuaternion.setFromUnitVectors(up, plane.normal);
         const yRotation = ref.current.rotation.y;
         ref.current.quaternion.slerp(targetQuaternion, rotationInterpolation);
         if (lockY) ref.current.rotation.y = yRotation;

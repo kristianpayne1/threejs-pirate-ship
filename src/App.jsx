@@ -37,7 +37,6 @@ function App() {
                             <Ship
                                 rotation={[0, -Math.PI / 4, 0]}
                                 scale={0.3}
-                                position={[0, 1, 0]}
                                 waterRef={waterRef}
                             />
                             <Seagull

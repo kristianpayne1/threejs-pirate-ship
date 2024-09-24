@@ -139,7 +139,9 @@ export default forwardRef(function Water(
                 readWaterLevelImage
             );
             const pixels = new Float32Array(readWaterLevelImage.buffer);
-            return pixels.filter((_, i) => i % 4 === 0);
+            return pixels
+                .filter((_, i) => i % 4 === 0)
+                .slice(0, positions.length);
         };
     }, [readWaterLevelImage, readWaterLevelRenderTarget]);
 

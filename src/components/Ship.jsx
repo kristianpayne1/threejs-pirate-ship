@@ -11,7 +11,6 @@ export default function Ship({
     waterRef,
     ...props
 }) {
-    const ref = useRef(null);
     const boxRef = useRef(null);
 
     const {
@@ -22,9 +21,9 @@ export default function Ship({
     } = useGLTF("./ship.glb");
 
     useCustomBounds({
-        ref,
-        translate: new Vector3(0, -3, 0),
-        transform: new Vector3(3, 3, 3),
+        ref: boxRef,
+        translate: new Vector3(0, -1, 0),
+        transform: new Vector3(4, 4, 4),
     });
 
     return (
@@ -40,7 +39,7 @@ export default function Ship({
                 <meshStandardMaterial map={map} />
             </mesh>
             <group position={[0, 2, 0.5]}>
-                <mesh ref={ref} geometry={Mast.geometry}>
+                <mesh geometry={Mast.geometry}>
                     <meshStandardMaterial map={map} />
                 </mesh>
                 <mesh geometry={Sails.geometry}>
