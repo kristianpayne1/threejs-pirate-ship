@@ -1,8 +1,9 @@
-import { Box, useGLTF } from "@react-three/drei";
 import { useRef } from "react";
+import { Box, useGLTF } from "@react-three/drei";
 import { Vector3 } from "three";
 import useCustomBounds from "../hooks/useCustomBounds";
 import { BuoyantObject } from "./BuoyantObject";
+import ShipWheel from "./ShipWheel";
 
 export default function Ship({
     position,
@@ -17,7 +18,7 @@ export default function Ship({
         materials: {
             ship_material: { map },
         },
-        nodes: { Hull, Mast, Sails, Cannon, Anchor, ShipWheel },
+        nodes: { Hull, Mast, Sails, Cannon, Anchor, ShipWheel: Wheel },
     } = useGLTF("./ship.glb");
 
     useCustomBounds({
@@ -46,13 +47,7 @@ export default function Ship({
                     <meshStandardMaterial map={map} />
                 </mesh>
             </group>
-            <mesh
-                position={[0, 4.5, -4.5]}
-                scale={1.75}
-                geometry={ShipWheel.geometry}
-            >
-                <meshStandardMaterial map={map} />
-            </mesh>
+            <ShipWheel geometry={Wheel.geometry} map={map} />
             <mesh position={[0, 2.5, 4]} scale={1.5} geometry={Cannon.geometry}>
                 <meshStandardMaterial map={map} />
             </mesh>

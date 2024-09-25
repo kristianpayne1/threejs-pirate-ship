@@ -15,19 +15,18 @@ function calculateBounds({ ref, bounds, translate, transform }) {
 }
 
 function useCustomBounds({
-    ref,
+    ref = {},
     translate = new Vector3(0, 0, 0),
     transform = new Vector3(0, 0, 0),
 }) {
     const bounds = useBounds();
 
     useEffect(() => {
-        if (!ref.current) return;
         const cb = () => calculateBounds({ ref, bounds, translate, transform });
         window.addEventListener("resize", cb);
         cb();
         return () => window.removeEventListener("resize", cb);
-    }, [ref.current]);
+    }, [ref]);
 }
 
 export default useCustomBounds;

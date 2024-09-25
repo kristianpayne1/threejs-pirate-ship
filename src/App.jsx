@@ -13,6 +13,7 @@ import Seagull from "./components/Seagull";
 
 function App() {
     const waterRef = useRef(null);
+
     return (
         <>
             <Canvas
@@ -31,6 +32,7 @@ function App() {
                         snap
                         polar={[-Math.PI / 4.5, Math.PI / 4.5]}
                         azimuth={[-Math.PI / 1.4, Math.PI / 2]}
+                        cursor={false}
                     >
                         <Bounds fit clip margin={1}>
                             <Water ref={waterRef} />
