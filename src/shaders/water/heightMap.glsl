@@ -19,20 +19,20 @@ float displace(vec2 point) {
   n += gln_GerstnerWave(p, B, uTime).xzy * 0.5;
 
   return n.z;
-}  
+}
 
-void main()	{
+void main() {
 
-    vec2 cellSize = 1.0 / resolution.xy;
+  vec2 cellSize = 1.0 / resolution.xy;
 
-    vec2 uv = gl_FragCoord.xy * cellSize;
+  vec2 uv = gl_FragCoord.xy * cellSize;
 
-    vec4 heightMapValue = texture2D(heightmap, uv);
+  vec4 heightMapValue = texture2D(heightmap, uv);
 
-    float newHeight = displace(uv);
+  float newHeight = displace(uv);
 
-    heightMapValue.y = heightMapValue.x;
-    heightMapValue.x = newHeight;
+  heightMapValue.y = heightMapValue.x;
+  heightMapValue.x = newHeight;
 
-    gl_FragColor = heightMapValue;
+  gl_FragColor = heightMapValue;
 }

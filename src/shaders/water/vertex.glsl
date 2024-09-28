@@ -1,30 +1,29 @@
-uniform sampler2D heightmap; 
+uniform sampler2D heightmap;
 
 varying float vHeight;
 varying vec2 vUv;
 
-float BOUNDS = 8.0;
-float WIDTH = 40.0;
+// float BOUNDS = 8.0;
+// float WIDTH = 40.0;
 
 vec3 displace(vec3 p) {
-  if (abs(normal.x) > 0.5) {
+  if(abs(normal.x) > 0.5) {
     vUv = vec2(1.0 - uv.x, 1.0 - uv.y);
   }
-  if (abs(normal.z) > 0.5) {
+  if(abs(normal.z) > 0.5) {
     vUv = vec2(uv.x, 1.0 - uv.y);
   }
 
   float heightValue = texture2D(heightmap, vUv).x;
   vec3 n = p;
-  if (p.z >= 0.8 / 2.0) {
+  if(p.z >= 0.8 / 2.0) {
     n = vec3(p.xy, p.z + heightValue);
   }
   return n;
 }
 
 vec3 orthogonal(vec3 v) {
-  return normalize(abs(v.x) > abs(v.z) ? vec3(-v.y, v.x, 0.0)
-  : vec3(0.0, -v.z, v.y));
+  return normalize(abs(v.x) > abs(v.z) ? vec3(-v.y, v.x, 0.0) : vec3(0.0, -v.z, v.y));
 }
 
 vec3 recalcNormals(vec3 newPos) {

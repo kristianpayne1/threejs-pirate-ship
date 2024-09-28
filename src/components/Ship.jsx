@@ -4,6 +4,7 @@ import { Vector3 } from "three";
 import useCustomBounds from "../hooks/useCustomBounds";
 import { BuoyantObject } from "./BuoyantObject";
 import ShipWheel from "./ShipWheel";
+import Flag from "./Flag";
 
 export default function Ship({
     position,
@@ -60,6 +61,7 @@ export default function Ship({
             >
                 <meshStandardMaterial map={map} />
             </mesh>
+            <Flag position={[0, 18.5, -1]} rotation={[0, Math.PI / 2, 0]} />
             <Box ref={boxRef} args={[5, 5, 15]} position={[0, 2.5, 0]}>
                 <meshBasicMaterial transparent opacity={0} />
             </Box>

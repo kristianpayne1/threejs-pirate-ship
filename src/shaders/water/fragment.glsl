@@ -1,10 +1,7 @@
 varying float vHeight;
-varying vec2 vUv;
 
 uniform vec3 waterColor;
 uniform vec3 waterHighlight;
-
-uniform float offset;
 
 vec3 calcColor() {
 
@@ -16,5 +13,5 @@ vec3 calcColor() {
 }
 
 void main() {
-  csm_DiffuseColor = vec4(calcColor(), 0.9);   
+  csm_DiffuseColor = vec4(calcColor(), 0.9);
 }
