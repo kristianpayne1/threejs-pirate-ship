@@ -2,7 +2,7 @@ import { useGLTF, useAnimations } from "@react-three/drei";
 import { useEffect } from "react";
 
 export default function Seagull({ position, rotation, scale, ...props }) {
-    const { scene, animations } = useGLTF("./seagull.glb");
+    const { scene, animations } = useGLTF("./models/seagull.glb");
     const { ref, actions } = useAnimations(animations);
 
     useEffect(() => {

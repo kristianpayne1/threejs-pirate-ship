@@ -20,11 +20,11 @@ export default function Ship({
             ship_material: { map },
         },
         nodes: { Hull, Mast, Sails, Cannon, Anchor, ShipWheel: Wheel },
-    } = useGLTF("./ship.glb");
+    } = useGLTF("./models/ship.glb");
 
     useCustomBounds({
         ref: boxRef,
-        translate: new Vector3(0, -1, 0),
+        translate: new Vector3(0, 0, 0),
         transform: new Vector3(4, 4, 4),
     });
 
@@ -61,7 +61,7 @@ export default function Ship({
             >
                 <meshStandardMaterial map={map} />
             </mesh>
-            <Flag position={[0, 18.5, -1]} rotation={[0, Math.PI / 2, 0]} />
+            <Flag position={[0, 18.5, -0.8]} rotation={[0, Math.PI / 2, 0]} />
             <Box ref={boxRef} args={[5, 5, 15]} position={[0, 2.5, 0]}>
                 <meshBasicMaterial transparent opacity={0} />
             </Box>
