@@ -50,7 +50,7 @@ export default function ShipWheel({ map, geometry }) {
                 rotation={shipWheelSprings.rotation}
             >
                 <meshStandardMaterial map={map} />
-                <Outlines thickness={1} color={"0x000000"} />
+                <Outlines thickness={1} color={hovered ? "white" : "black"} />
             </animated.mesh>
             <Box
                 args={[1.5, 1.5, 0.5]}
