@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useSpring, animated, easings } from "@react-spring/three";
-import { Box, useCursor } from "@react-three/drei";
+import { Box, Outlines, useCursor } from "@react-three/drei";
 
 function spinWheelAnimation(api) {
     return async function () {
@@ -50,6 +50,7 @@ export default function ShipWheel({ map, geometry }) {
                 rotation={shipWheelSprings.rotation}
             >
                 <meshStandardMaterial map={map} />
+                <Outlines thickness={1} color={"0x000000"} />
             </animated.mesh>
             <Box
                 args={[1.5, 1.5, 0.5]}

@@ -1,5 +1,5 @@
 import { useRef } from "react";
-import { Box, useGLTF } from "@react-three/drei";
+import { Box, Outlines, useGLTF } from "@react-three/drei";
 import { Vector3 } from "three";
 import useCustomBounds from "../hooks/useCustomBounds";
 import { BuoyantObject } from "./BuoyantObject";
@@ -39,27 +39,32 @@ export default function Ship({
         >
             <mesh geometry={Hull.geometry}>
                 <meshStandardMaterial map={map} />
+                <Outlines thickness={1} color={"0x000000"} />
             </mesh>
             <group position={[0, 2, 0.5]}>
                 <mesh geometry={Mast.geometry}>
                     <meshStandardMaterial map={map} />
+                    <Outlines thickness={1} color={"0x000000"} />
                 </mesh>
                 <mesh geometry={Sails.geometry}>
                     <meshStandardMaterial map={map} />
+                    <Outlines thickness={1} color={"0x000000"} />
                 </mesh>
             </group>
             <ShipWheel geometry={Wheel.geometry} map={map} />
             <mesh position={[0, 2.5, 4]} scale={1.5} geometry={Cannon.geometry}>
                 <meshStandardMaterial map={map} />
+                <Outlines thickness={1} color={"0x000000"} />
             </mesh>
             <mesh
-                rotation={[-Math.PI / 16, Math.PI / 2, Math.PI / 8]}
+                rotation={[-Math.PI / 16, Math.PI / 1.9, Math.PI / 8]}
                 rotation-order="YXZ"
                 position={[2.25, 2, -4.5]}
                 geometry={Anchor.geometry}
                 scale={1.5}
             >
                 <meshStandardMaterial map={map} />
+                <Outlines thickness={1} color={"0x000000"} />
             </mesh>
             <Flag position={[0, 18.5, -0.8]} rotation={[0, Math.PI / 2, 0]} />
             <Box ref={boxRef} args={[5, 5, 15]} position={[0, 2.5, 0]}>
