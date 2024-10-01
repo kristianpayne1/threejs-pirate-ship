@@ -1,7 +1,4 @@
-import { shaderMaterial } from "@react-three/drei";
-import { extend, applyProps, useThree } from "@react-three/fiber";
-import { toCreasedNormals } from "three-stdlib";
-import ThreeCustomShaderMaterial from "three-custom-shader-material";
+import { forwardRef, useEffect, useLayoutEffect, useMemo, useRef } from "react";
 import {
     BackSide,
     Color,
@@ -10,17 +7,13 @@ import {
     SkinnedMesh,
     Vector2,
 } from "three";
+import { shaderMaterial } from "@react-three/drei";
+import { extend, applyProps, useThree } from "@react-three/fiber";
+import { toCreasedNormals } from "three-stdlib";
+import ThreeCustomShaderMaterial from "three-custom-shader-material";
 
 import vertexShader from "../shaders/outlines/vertex.glsl";
 import fragmentShader from "../shaders/outlines/fragment.glsl";
-import {
-    forwardRef,
-    useEffect,
-    useLayoutEffect,
-    useMemo,
-    useRef,
-    useState,
-} from "react";
 
 const OutlinesMaterial = shaderMaterial(
     {
@@ -33,6 +26,8 @@ const OutlinesMaterial = shaderMaterial(
     vertexShader,
     fragmentShader
 );
+
+extend({ OutlinesMaterial });
 
 export const Outlines = forwardRef(function Outlines(
     {
@@ -56,7 +51,13 @@ export const Outlines = forwardRef(function Outlines(
     const _ref = useRef();
     const ref = outlinesRef || _ref;
 
-    const [material] = useState(() => {
+    const { gl } = useThree();
+    const contextSize = gl.getDrawingBufferSize(new Vector2());
+
+    const oldAngle = useRef(0);
+    const oldGeometry = useRef();
+
+    const material = useMemo(() => {
         if (!vertexShader && !fragmentShader)
             return new OutlinesMaterial({ side: BackSide });
         return new ThreeCustomShaderMaterial({
@@ -65,13 +66,8 @@ export const Outlines = forwardRef(function Outlines(
             fragmentShader,
             uniforms,
         });
-    });
-    const { gl } = useThree();
-    const contextSize = gl.getDrawingBufferSize(new Vector2());
-    useMemo(() => extend({ OutlinesMaterial }), []);
+    }, [vertexShader, fragmentShader, uniforms]);
 
-    const oldAngle = useRef(0);
-    const oldGeometry = useRef();
     useLayoutEffect(() => {
         const group = ref.current;
         if (!group) return;
