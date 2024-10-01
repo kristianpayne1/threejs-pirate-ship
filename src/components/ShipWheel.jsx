@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useSpring, animated, easings } from "@react-spring/three";
-import { Box, Outlines, useCursor } from "@react-three/drei";
+import { Box, useCursor } from "@react-three/drei";
+import { Outlines } from "./Outlines";
 
 function spinWheelAnimation(api) {
     return async function () {

@@ -1,10 +1,11 @@
 import { useRef } from "react";
-import { Box, Outlines, useGLTF } from "@react-three/drei";
+import { Box, useGLTF } from "@react-three/drei";
 import { Vector3 } from "three";
 import useCustomBounds from "../hooks/useCustomBounds";
 import { BuoyantObject } from "./BuoyantObject";
 import ShipWheel from "./ShipWheel";
 import Flag from "./Flag";
+import { Outlines } from "./Outlines";
 
 export default function Ship({
     position,
@@ -39,22 +40,22 @@ export default function Ship({
         >
             <mesh geometry={Hull.geometry}>
                 <meshStandardMaterial map={map} />
-                <Outlines thickness={1} color={"0x000000"} />
+                <Outlines thickness={1} />
             </mesh>
             <group position={[0, 2, 0.5]}>
                 <mesh geometry={Mast.geometry}>
                     <meshStandardMaterial map={map} />
-                    <Outlines thickness={1} color={"0x000000"} />
+                    <Outlines thickness={1} />
                 </mesh>
                 <mesh geometry={Sails.geometry}>
                     <meshStandardMaterial map={map} />
-                    <Outlines thickness={1} color={"0x000000"} />
+                    <Outlines thickness={1} />
                 </mesh>
             </group>
             <ShipWheel geometry={Wheel.geometry} map={map} />
             <mesh position={[0, 2.5, 4]} scale={1.5} geometry={Cannon.geometry}>
                 <meshStandardMaterial map={map} />
-                <Outlines thickness={1} color={"0x000000"} />
+                <Outlines thickness={1} />
             </mesh>
             <mesh
                 rotation={[-Math.PI / 16, Math.PI / 1.9, Math.PI / 8]}
@@ -64,7 +65,7 @@ export default function Ship({
                 scale={1.5}
             >
                 <meshStandardMaterial map={map} />
-                <Outlines thickness={1} color={"0x000000"} />
+                <Outlines thickness={1} />
             </mesh>
             <Flag position={[0, 18.5, -0.8]} rotation={[0, Math.PI / 2, 0]} />
             <Box ref={boxRef} args={[5, 5, 15]} position={[0, 2.5, 0]}>

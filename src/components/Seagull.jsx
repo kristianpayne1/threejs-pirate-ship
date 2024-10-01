@@ -1,5 +1,6 @@
-import { useGLTF, useAnimations, Outlines } from "@react-three/drei";
+import { useGLTF, useAnimations } from "@react-three/drei";
 import { useEffect } from "react";
+import { Outlines } from "./Outlines";
 
 export default function Seagull({ position, rotation, scale, ...props }) {
     const { nodes, materials, animations } = useGLTF("./models/seagull.glb");
@@ -31,7 +32,7 @@ export default function Seagull({ position, rotation, scale, ...props }) {
                             material={materials.White}
                             skeleton={nodes.Cylinder001.skeleton}
                         >
-                            <Outlines thickness={0.55} color={"0x000000"} />
+                            <Outlines thickness={0.55} />
                         </skinnedMesh>
                         <skinnedMesh
                             name="Cylinder001_1"
