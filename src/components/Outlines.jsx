@@ -10,10 +10,9 @@ import {
 import { shaderMaterial } from "@react-three/drei";
 import { extend, applyProps, useThree } from "@react-three/fiber";
 import { toCreasedNormals } from "three-stdlib";
-import ThreeCustomShaderMaterial from "three-custom-shader-material";
 
-import vertexShader from "../shaders/outlines/vertex.glsl";
-import fragmentShader from "../shaders/outlines/fragment.glsl";
+import outlineVertexShader from "../shaders/outlines/vertex.glsl";
+import outlineFragmentShader from "../shaders/outlines/fragment.glsl";
 
 const OutlinesMaterial = shaderMaterial(
     {
@@ -23,8 +22,8 @@ const OutlinesMaterial = shaderMaterial(
         thickness: 0.05,
         size: new Vector2(),
     },
-    vertexShader,
-    fragmentShader
+    outlineVertexShader,
+    outlineFragmentShader
 );
 
 extend({ OutlinesMaterial });
@@ -58,14 +57,8 @@ export const Outlines = forwardRef(function Outlines(
     const oldGeometry = useRef();
 
     const material = useMemo(() => {
-        if (!vertexShader && !fragmentShader)
-            return new OutlinesMaterial({ side: BackSide });
-        return new ThreeCustomShaderMaterial({
-            baseMaterial: OutlinesMaterial,
-            vertexShader,
-            fragmentShader,
-            uniforms,
-        });
+        // if (!vertexShader && !fragmentShader)
+        return new OutlinesMaterial({ side: BackSide });
     }, [vertexShader, fragmentShader, uniforms]);
 
     useLayoutEffect(() => {
@@ -132,6 +125,13 @@ export const Outlines = forwardRef(function Outlines(
                 polygonOffsetFactor,
             });
         }
+    });
+
+    useLayoutEffect(() => {
+        const group = ref.current;
+        if (!group) return;
+
+        group.material = material;
     });
 
     useEffect(() => {

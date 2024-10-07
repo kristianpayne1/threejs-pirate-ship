@@ -5,6 +5,7 @@ import useCustomBounds from "../hooks/useCustomBounds";
 import { BuoyantObject } from "./BuoyantObject";
 import ShipWheel from "./ShipWheel";
 import Flag from "./Flag";
+import Cannon from "./Cannon";
 import { Outlines } from "./Outlines";
 
 export default function Ship({
@@ -20,7 +21,14 @@ export default function Ship({
         materials: {
             ship_material: { map },
         },
-        nodes: { Hull, Mast, Sails, Cannon, Anchor, ShipWheel: Wheel },
+        nodes: {
+            Hull,
+            Mast,
+            Sails,
+            Cannon: ShipCannon,
+            Anchor,
+            ShipWheel: Wheel,
+        },
     } = useGLTF("./models/ship.glb");
 
     useCustomBounds({
@@ -53,10 +61,12 @@ export default function Ship({
                 </mesh>
             </group>
             <ShipWheel geometry={Wheel.geometry} map={map} />
-            <mesh position={[0, 2.5, 4]} scale={1.5} geometry={Cannon.geometry}>
-                <meshStandardMaterial map={map} />
-                <Outlines thickness={1} />
-            </mesh>
+            <Cannon
+                geometry={ShipCannon.geometry}
+                position={[0, 2.5, 4]}
+                scale={1.5}
+                map={map}
+            />
             <mesh
                 rotation={[-Math.PI / 16, Math.PI / 1.9, Math.PI / 8]}
                 rotation-order="YXZ"
