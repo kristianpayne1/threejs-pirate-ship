@@ -8,25 +8,25 @@ import {
     Vector2,
 } from "three";
 import { shaderMaterial } from "@react-three/drei";
-import { extend, applyProps, useThree } from "@react-three/fiber";
+import { applyProps, useThree } from "@react-three/fiber";
 import { toCreasedNormals } from "three-stdlib";
 
 import outlineVertexShader from "../shaders/outlines/vertex.glsl";
 import outlineFragmentShader from "../shaders/outlines/fragment.glsl";
 
+const outlineUniforms = {
+    screenspace: false,
+    color: new Color("black"),
+    opacity: 1,
+    thickness: 0.05,
+    size: new Vector2(),
+};
+
 const OutlinesMaterial = shaderMaterial(
-    {
-        screenspace: false,
-        color: new Color("black"),
-        opacity: 1,
-        thickness: 0.05,
-        size: new Vector2(),
-    },
+    outlineUniforms,
     outlineVertexShader,
     outlineFragmentShader
 );
-
-extend({ OutlinesMaterial });
 
 export const Outlines = forwardRef(function Outlines(
     {
@@ -57,8 +57,14 @@ export const Outlines = forwardRef(function Outlines(
     const oldGeometry = useRef();
 
     const material = useMemo(() => {
-        // if (!vertexShader && !fragmentShader)
-        return new OutlinesMaterial({ side: BackSide });
+        if (!vertexShader.main && !fragmentShader.main)
+            return new OutlinesMaterial({ side: BackSide });
+        const customOutlineMaterial = shaderMaterial(
+            { ...uniforms, ...outlineUniforms },
+            vertexShader,
+            fragmentShader
+        );
+        return new customOutlineMaterial({ side: BackSide });
     }, [vertexShader, fragmentShader, uniforms]);
 
     useLayoutEffect(() => {
