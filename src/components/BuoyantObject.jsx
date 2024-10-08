@@ -8,12 +8,17 @@ const voxelMin = new Vector3();
 const voxelMax = new Vector3();
 const center = new Vector3();
 const voxel = new Box3();
-const a = new Vector3();
-const b = new Vector3();
-const c = new Vector3();
+const a0 = new Vector3();
+const a1 = new Vector3();
+const a2 = new Vector3();
+const b0 = new Vector3();
+const b1 = new Vector3();
+const b2 = new Vector3();
 const plane = new Plane();
 const up = new Vector3(0, 1, 0);
 const targetQuaternion = new Quaternion();
+const targetQuaternion0 = new Quaternion();
+const targetQuaternion1 = new Quaternion();
 const targetPosition = new Vector3();
 
 function getAverageHeight(heights) {
@@ -51,13 +56,14 @@ function updatePositionRotation(
             voxel.getCenter(center);
             centers.push(center.clone());
 
-            if (!i && !j) a.copy(center);
-            else if (
-                i === Math.round(subdivisionsX / 2) &&
-                j === subdivisionsY - 1
-            )
-                b.copy(center);
-            else if (i === subdivisionsX - 1 && !j) c.copy(center);
+            if (!i && !j) a0.copy(center);
+            if (i === Math.round(subdivisionsX / 2) && j === subdivisionsY - 1)
+                a1.copy(center);
+            if (i === subdivisionsX - 1 && !j) a2.copy(center);
+            if (i === Math.round(subdivisionsX / 2) && !j) b0.copy(center);
+            if (!i && j === subdivisionsY - 1) b1.copy(center);
+            if (i === subdivisionsX - 1 && j == subdivisionsY - 1)
+                b2.copy(center);
         }
     }
 
@@ -69,11 +75,17 @@ function updatePositionRotation(
         targetPosition.z
     );
 
-    a.setY(heights[0]);
-    b.setY(heights[Math.round(subdivisionsX / 2) + subdivisionsY - 1]);
-    c.setY(heights[subdivisionsX - 1]);
-    plane.setFromCoplanarPoints(a, b, c);
-    targetQuaternion.setFromUnitVectors(up, plane.normal);
+    a0.setY(heights[0]);
+    a1.setY(heights[Math.round(subdivisionsX / 2) + subdivisionsY - 1]);
+    a2.setY(heights[subdivisionsX - 1]);
+    b0.setY(heights[Math.round(subdivisionsX / 2)]);
+    b1.setY(heights[subdivisionsY - 1]);
+    b2.setY(heights[subdivisionsX - 1 + subdivisionsY - 1]);
+    plane.setFromCoplanarPoints(a0, a1, a2);
+    targetQuaternion0.setFromUnitVectors(up, plane.normal);
+    plane.setFromCoplanarPoints(b0, b1, b2);
+    targetQuaternion1.setFromUnitVectors(up, plane.normal);
+    targetQuaternion.multiplyQuaternions(targetQuaternion0, targetQuaternion1);
 }
 
 export function BuoyantObject({
@@ -83,7 +95,7 @@ export function BuoyantObject({
     subdivisionsX = 3,
     subdivisionsY = 6,
     lockY = true,
-    rotationInterpolation = 0.0075,
+    rotationInterpolation = 0.01,
     ...props
 }) {
     const ref = useRef(null);
