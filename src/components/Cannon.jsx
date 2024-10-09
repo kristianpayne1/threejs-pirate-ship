@@ -14,7 +14,7 @@ function fireCannon(setAnimating, api, explosion) {
 
         await api.start({
             position: [0, 0, 0],
-            delay: 500,
+            delay: 200,
             onRest: () => setAnimating(false),
         })[0];
     };
