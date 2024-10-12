@@ -39,22 +39,25 @@ function fillTexture(texture, width) {
 }
 
 export default forwardRef(function Water(
-    { width = 40, segments = 8, thickness = 0.8, numPoints = 30 },
+    {
+        width = 40,
+        segments = 8,
+        waterHeight = 0.8,
+        readWaterHeightBufferLimit = 32,
+    },
     ref
 ) {
     const material = useRef(null);
 
     const { gl: renderer } = useThree();
 
-    const {
-        gpuCompute,
-        heightMapVariable,
-        readWaterLevelShader,
-        readWaterLevelImage,
-        readWaterLevelRenderTarget,
-    } = useMemo(() => {
-        const gpuCompute = new GPUComputationRenderer(width, width, renderer);
+    const gpuCompute = useMemo(
+        () => new GPUComputationRenderer(width, width, renderer),
+        [width, renderer]
+    );
 
+    const heightMapVariable = useMemo(() => {
+        // create height map texture
         const heightmap0 = gpuCompute.createTexture();
 
         fillTexture(heightmap0, width);
@@ -69,7 +72,7 @@ export default forwardRef(function Water(
             heightMapVariable,
         ]);
 
-        heightMapVariable.material.uniforms.uHeight = { value: thickness };
+        heightMapVariable.material.uniforms.uHeight = { value: waterHeight };
         heightMapVariable.material.uniforms.uTime = { value: 0.0 };
 
         const error = gpuCompute.init();
@@ -77,53 +80,76 @@ export default forwardRef(function Water(
             console.error(error);
         }
 
+        return heightMapVariable;
+    }, [gpuCompute, width, waterHeight]);
+
+    const {
+        readWaterLevelShader,
+        readWaterLevelImage,
+        readWaterLevelRenderTarget,
+    } = useMemo(() => {
         // Create compute shader to read water level
         const readWaterLevelShader = gpuCompute.createShaderMaterial(
             readWaterLevelVertex,
             {
                 points: { value: [] },
                 levelTexture: { value: null },
-                numPoints: { value: numPoints },
+                numPoints: { value: readWaterHeightBufferLimit },
             }
         );
         readWaterLevelShader.defines.WIDTH = width.toFixed(1);
         readWaterLevelShader.defines.BOUNDS = segments.toFixed(1);
 
-        const readWaterLevelImage = new Uint8Array(4 * numPoints * 4);
+        const readWaterLevelImage = new Uint8Array(
+            4 * readWaterHeightBufferLimit * 4
+        );
 
-        const readWaterLevelRenderTarget = new WebGLRenderTarget(4, numPoints, {
-            wrapS: ClampToEdgeWrapping,
-            wrapT: ClampToEdgeWrapping,
-            minFilter: NearestFilter,
-            magFilter: NearestFilter,
-            format: RGBAFormat,
-            type: UnsignedByteType,
-            depthBuffer: false,
-        });
+        const readWaterLevelRenderTarget = new WebGLRenderTarget(
+            4,
+            readWaterHeightBufferLimit,
+            {
+                wrapS: ClampToEdgeWrapping,
+                wrapT: ClampToEdgeWrapping,
+                minFilter: NearestFilter,
+                magFilter: NearestFilter,
+                format: RGBAFormat,
+                type: UnsignedByteType,
+                depthBuffer: false,
+            }
+        );
 
         return {
-            gpuCompute,
-            heightMapVariable,
             readWaterLevelShader,
             readWaterLevelImage,
             readWaterLevelRenderTarget,
         };
-    }, [width, segments, thickness, numPoints]);
+    }, [gpuCompute, width, segments, readWaterHeightBufferLimit]);
 
     useLayoutEffect(() => {
         if (!ref.current) return;
         ref.current.readWaterLevel = (positions) => {
+            if (positions.length > readWaterHeightBufferLimit)
+                return console.error(
+                    "The length of positions exceeds the read water height buffer limit. \nConsider increasing `readWaterHeightBufferLimit` or passing fewer positions to read"
+                );
+
             const currentRenderTarget =
                 gpuCompute.getCurrentRenderTarget(heightMapVariable);
             readWaterLevelShader.uniforms["levelTexture"].value =
                 currentRenderTarget.texture;
 
+            // calculate the uv of every point
             const points = positions.map((position) => {
                 const u = (0.5 * position.x) / (segments * 0.5) + 0.5;
                 const v = 1 - ((0.5 * position.z) / (segments * 0.5) + 0.5);
                 return new Vector2(u, v);
             });
-            points.push(...Array(numPoints - points.length).fill(emptyVec2));
+            // fill the rest of the buffer with empty UVs
+            points.push(
+                ...Array(readWaterHeightBufferLimit - points.length).fill(
+                    emptyVec2
+                )
+            );
             readWaterLevelShader.uniforms["numPoints"].value = points.length;
             readWaterLevelShader.uniforms["points"].value = points;
             gpuCompute.doRenderTarget(
@@ -138,12 +164,23 @@ export default forwardRef(function Water(
                 points.length,
                 readWaterLevelImage
             );
+            // return the array of heights the same length as `positions`
             const pixels = new Float32Array(readWaterLevelImage.buffer);
             return pixels
                 .filter((_, i) => i % 4 === 0)
                 .slice(0, positions.length);
         };
-    }, [readWaterLevelImage, readWaterLevelRenderTarget]);
+    }, [
+        ref,
+        readWaterHeightBufferLimit,
+        segments,
+        readWaterLevelImage,
+        readWaterLevelRenderTarget,
+        gpuCompute,
+        heightMapVariable,
+        readWaterLevelShader,
+        renderer,
+    ]);
 
     useFrame(() => {
         if (!material.current || !gpuCompute || !heightMapVariable) return;
@@ -162,7 +199,7 @@ export default forwardRef(function Water(
             rotation-x={-Math.PI / 2}
             rotation-z={Math.PI / 4}
         >
-            <boxGeometry args={[8, 8, thickness, width, width, 1]} />
+            <boxGeometry args={[8, 8, waterHeight, width, width, 1]} />
             <CustomShaderMaterial
                 ref={material}
                 baseMaterial={MeshPhongMaterial}

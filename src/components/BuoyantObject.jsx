@@ -25,7 +25,7 @@ function getAverageHeight(heights) {
     return heights.reduce((acc, value) => acc + value, 0) / heights.length;
 }
 
-function updatePositionRotation(
+function updateTransforms(
     targetPosition,
     targetQuaternion,
     { _ref, waterRef, subdivisionsX, subdivisionsY }
@@ -94,7 +94,7 @@ export function BuoyantObject({
     boxRef,
     subdivisionsX = 3,
     subdivisionsY = 6,
-    lockY = true,
+    lockYRotation = true,
     rotationInterpolation = 0.01,
     ...props
 }) {
@@ -106,7 +106,7 @@ export function BuoyantObject({
 
         targetPosition.copy(ref.current.position);
 
-        updatePositionRotation(targetPosition, targetQuaternion, {
+        updateTransforms(targetPosition, targetQuaternion, {
             _ref,
             waterRef,
             subdivisionsX,
@@ -117,7 +117,7 @@ export function BuoyantObject({
 
         const yRotation = ref.current.rotation.y;
         ref.current.quaternion.slerp(targetQuaternion, rotationInterpolation);
-        if (lockY) ref.current.rotation.y = yRotation;
+        if (lockYRotation) ref.current.rotation.y = yRotation;
     });
 
     return (
