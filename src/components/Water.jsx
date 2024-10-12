@@ -40,8 +40,8 @@ function fillTexture(texture, width) {
 
 export default forwardRef(function Water(
     {
-        width = 40,
-        segments = 8,
+        width = 8,
+        subdivisions = 40,
         waterHeight = 0.8,
         readWaterHeightBufferLimit = 32,
     },
@@ -52,8 +52,8 @@ export default forwardRef(function Water(
     const { gl: renderer } = useThree();
 
     const gpuCompute = useMemo(
-        () => new GPUComputationRenderer(width, width, renderer),
-        [width, renderer]
+        () => new GPUComputationRenderer(subdivisions, subdivisions, renderer),
+        [subdivisions, renderer]
     );
 
     const heightMapVariable = useMemo(() => {
@@ -98,7 +98,7 @@ export default forwardRef(function Water(
             }
         );
         readWaterLevelShader.defines.WIDTH = width.toFixed(1);
-        readWaterLevelShader.defines.BOUNDS = segments.toFixed(1);
+        readWaterLevelShader.defines.BOUNDS = subdivisions.toFixed(1);
 
         const readWaterLevelImage = new Uint8Array(
             4 * readWaterHeightBufferLimit * 4
@@ -123,7 +123,7 @@ export default forwardRef(function Water(
             readWaterLevelImage,
             readWaterLevelRenderTarget,
         };
-    }, [gpuCompute, width, segments, readWaterHeightBufferLimit]);
+    }, [gpuCompute, width, subdivisions, readWaterHeightBufferLimit]);
 
     useLayoutEffect(() => {
         if (!ref.current) return;
@@ -140,8 +140,8 @@ export default forwardRef(function Water(
 
             // calculate the uv of every point
             const points = positions.map((position) => {
-                const u = (0.5 * position.x) / (segments * 0.5) + 0.5;
-                const v = 1 - ((0.5 * position.z) / (segments * 0.5) + 0.5);
+                const u = (0.5 * position.x) / (width * 0.5) + 0.5;
+                const v = 1 - ((0.5 * position.z) / (width * 1.5) + 0.5);
                 return new Vector2(u, v);
             });
             // fill the rest of the buffer with empty UVs
@@ -173,7 +173,7 @@ export default forwardRef(function Water(
     }, [
         ref,
         readWaterHeightBufferLimit,
-        segments,
+        width,
         readWaterLevelImage,
         readWaterLevelRenderTarget,
         gpuCompute,
@@ -199,7 +199,16 @@ export default forwardRef(function Water(
             rotation-x={-Math.PI / 2}
             rotation-z={Math.PI / 4}
         >
-            <boxGeometry args={[8, 8, waterHeight, width, width, 1]} />
+            <boxGeometry
+                args={[
+                    width,
+                    width,
+                    waterHeight,
+                    subdivisions,
+                    subdivisions,
+                    1,
+                ]}
+            />
             <CustomShaderMaterial
                 ref={material}
                 baseMaterial={MeshPhongMaterial}

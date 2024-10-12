@@ -137,7 +137,7 @@ export const Outlines = forwardRef(function Outlines(
         const group = ref.current;
         if (!group) return;
 
-        group.material = material;
+        group.userData.material = material;
     });
 
     useEffect(() => {

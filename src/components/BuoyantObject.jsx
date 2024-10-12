@@ -95,7 +95,7 @@ export function BuoyantObject({
     subdivisionsX = 3,
     subdivisionsY = 6,
     lockYRotation = true,
-    rotationInterpolation = 0.01,
+    rotationInterpolation = 0.005,
     ...props
 }) {
     const ref = useRef(null);
