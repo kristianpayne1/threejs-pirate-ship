@@ -5,6 +5,15 @@ import ParticleSystem from "./ParticleSystem";
 import { QuarksUtil } from "three.quarks";
 import CannonBall from "./CannonBall";
 
+function resetCannonBall(cannonBallRigidBody, setAnimating) {
+    cannonBallRigidBody.resetForces(false);
+    cannonBallRigidBody.resetTorques(false);
+    cannonBallRigidBody.setTranslation({ x: -1.4, y: 1.575, z: 1.4 }, true);
+    cannonBallRigidBody.sleep();
+
+    setAnimating(false);
+}
+
 function fireCannon(setAnimating, api, explosion, cannonBallRigidBody) {
     return async function () {
         setAnimating(true);
@@ -19,13 +28,8 @@ function fireCannon(setAnimating, api, explosion, cannonBallRigidBody) {
         await api.start({
             position: [0, 0, 0],
             delay: 200,
-            onRest: () => setAnimating(false),
+            onRest: () => resetCannonBall(cannonBallRigidBody, setAnimating),
         })[0];
-
-        cannonBallRigidBody.resetForces(false);
-        cannonBallRigidBody.resetTorques(false);
-        cannonBallRigidBody.setTranslation({ x: -1.4, y: 1.575, z: 1.4 }, true);
-        cannonBallRigidBody.sleep();
     };
 }
 
