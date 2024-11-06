@@ -1,23 +1,50 @@
-import { useGLTF, useAnimations } from "@react-three/drei";
+import { useAnimations, useGLTF } from "@react-three/drei";
 import { useEffect } from "react";
 import { Outlines } from "./Outlines";
+import { animated, easings, useSpring } from "@react-spring/three";
+
+function getRandomPosition(position, max = 1) {
+    const x = Math.random() * (max + max) - max;
+    const y = Math.random() * (max + max) - max;
+    const z = Math.random() * (max + max) - max;
+
+    return [position[0] + x, position[1] + y, position[2] + z];
+}
+
+function move(api, position) {
+    api.start({
+        position: getRandomPosition(position),
+        config: {
+            duration: 8e3,
+            tension: 180,
+            friction: 12,
+            easing: easings.easeInOutBack,
+        },
+        onRest: () => move(api, position),
+    });
+}
 
 export default function Seagull({ position, rotation, scale, ...props }) {
     const { nodes, materials, animations } = useGLTF("./models/seagull.glb");
     const { ref, actions } = useAnimations(animations);
 
+    const [springs, api] = useSpring(() => ({
+        position,
+        rotation,
+    }));
+
     useEffect(() => {
         actions?.flap.play();
-    }, []);
+        move(api, position);
+    }, [actions, api, position]);
 
     return (
-        <group
+        <animated.group
+            position={springs.position}
+            rotation={springs.rotation}
             ref={ref}
-            position={position}
-            rotation={rotation}
             scale={scale}
             {...props}
-            dispose={null}
         >
             <group name="Scene">
                 <group
@@ -53,6 +80,6 @@ export default function Seagull({ position, rotation, scale, ...props }) {
                     <primitive object={nodes.Bone012} />
                 </group>
             </group>
-        </group>
+        </animated.group>
     );
 }
