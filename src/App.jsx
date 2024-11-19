@@ -40,17 +40,18 @@ function App() {
                                 polar={[-Math.PI / 4.5, Math.PI / 4.5]}
                                 azimuth={[-Math.PI / 1.4, Math.PI / 2]}
                                 cursor={false}
+                                rotation={[0, Math.PI / 4, 0]}
                             >
                                 <Bounds fit clip margin={1}>
                                     <Water ref={waterRef} />
                                     <Ship
-                                        rotation={[0, -Math.PI / 4, 0]}
+                                        rotation={[0, -Math.PI / 2, 0]}
                                         scale={0.3}
                                         waterRef={waterRef}
                                     />
                                     <Seagull
-                                        position={[2.5, 5, 0]}
-                                        rotation={[0, -Math.PI / 4, 0]}
+                                        position={[2, 5, 2]}
+                                        rotation={[0, -Math.PI / 2, 0]}
                                         scale={0.04}
                                     />
                                 </Bounds>

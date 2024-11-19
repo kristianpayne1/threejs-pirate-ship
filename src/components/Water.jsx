@@ -192,13 +192,7 @@ export default forwardRef(function Water(
     });
 
     return (
-        <mesh
-            ref={ref}
-            castShadow
-            receiveShadow
-            rotation-x={-Math.PI / 2}
-            rotation-z={Math.PI / 4}
-        >
+        <mesh ref={ref} castShadow receiveShadow rotation-x={-Math.PI / 2}>
             <boxGeometry
                 args={[
                     width,
