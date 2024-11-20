@@ -1,9 +1,9 @@
-import { useAnimations, useGLTF } from "@react-three/drei";
-import { useEffect } from "react";
-import { Outlines } from "./Outlines";
+import { Outlines, useAnimations, useGLTF } from "@react-three/drei";
 import { animated, easings, useSpring } from "@react-spring/three";
 import { Euler, LoopOnce, Quaternion, Vector3 } from "three";
-import { useFrame } from "@react-three/fiber";
+import { useEffect, useMemo } from "react";
+import { useFrame, useGraph } from "@react-three/fiber";
+import { SkeletonUtils } from "three-stdlib";
 
 function getRandomPosition(origin, max = 1) {
     const x = Math.random() * (max + max) - max;
@@ -14,33 +14,38 @@ function getRandomPosition(origin, max = 1) {
 }
 
 // y = -(0.175x-0.7)^2+0.5
-function move(ref, { api, origin, rotationOrigin }) {
+function move(ref, { api, origin }) {
     const position = getRandomPosition(origin);
     api.start({
         position,
-        onRest: () => move(ref, { api, origin, rotationOrigin }),
+        config: {
+            duration: Math.random() * (15e3 - 5e3) + 5e3,
+        },
+        onRest: () => move(ref, { api, origin }), // Recursive movement
     });
 }
 
 function playRandomAnimation(actions) {
     const randomInterval = Math.random() * (10e3 - 3e3) + 3e3;
     const actionsList = Object.values(actions);
+    const randomAction =
+        actionsList[Math.floor(Math.random() * actionsList.length)];
+    randomAction.reset().play();
     return setTimeout(() => {
-        const randomAction =
-            actionsList[Math.floor(Math.random() * actionsList.length)];
-        randomAction.reset().play();
         playRandomAnimation(actions);
     }, randomInterval);
 }
 
 export default function Seagull({ position, rotation, scale, ...props }) {
-    const { nodes, materials, animations } = useGLTF("./models/seagull.glb");
+    const { scene, materials, animations } = useGLTF("./models/seagull.glb");
     const { ref, actions } = useAnimations(animations);
+    const clone = useMemo(() => SkeletonUtils.clone(scene), [scene]);
+    const { nodes } = useGraph(clone);
 
     const [springs, api] = useSpring(() => ({
         position,
         config: {
-            duration: 8e3,
+            duration: Math.random() * (15e3 - 5e3) + 5e3,
             tension: 180,
             easing: easings.easeInOutBack,
         },
@@ -51,6 +56,7 @@ export default function Seagull({ position, rotation, scale, ...props }) {
     const maxRotation = Math.PI / 6;
     const newRotation = new Euler();
     const targetQuaternion = new Quaternion();
+
     useFrame((_, deltaTime) => {
         if (!ref.current) return;
         currentPosition.copy(ref.current.position);
@@ -71,7 +77,6 @@ export default function Seagull({ position, rotation, scale, ...props }) {
         actions.flap.clampWhenFinished = true;
         actions["2 flap"].setLoop(LoopOnce);
         actions["2 flap"].clampWhenFinished = true;
-        actions.flap.play();
         playRandomAnimation(actions);
     }, [actions, ref, api, position, rotation]);
 
@@ -84,15 +89,10 @@ export default function Seagull({ position, rotation, scale, ...props }) {
             rotation-order="YZX"
             {...props}
         >
-            <group name="Scene">
-                <group
-                    name="Armature"
-                    rotation={[0, 0, -Math.PI / 2]}
-                    scale={4.544}
-                >
-                    <group name="Cylinder">
+            <group>
+                <group rotation={[0, 0, -Math.PI / 2]} scale={4.544}>
+                    <group>
                         <skinnedMesh
-                            name="Cylinder001"
                             geometry={nodes.Cylinder001.geometry}
                             material={materials.White}
                             skeleton={nodes.Cylinder001.skeleton}
@@ -100,13 +100,11 @@ export default function Seagull({ position, rotation, scale, ...props }) {
                             <Outlines thickness={0.55} />
                         </skinnedMesh>
                         <skinnedMesh
-                            name="Cylinder001_1"
                             geometry={nodes.Cylinder001_1.geometry}
                             material={materials.Black}
                             skeleton={nodes.Cylinder001_1.skeleton}
                         />
                         <skinnedMesh
-                            name="Cylinder001_2"
                             geometry={nodes.Cylinder001_2.geometry}
                             material={materials.Orange}
                             skeleton={nodes.Cylinder001_2.skeleton}

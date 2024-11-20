@@ -54,6 +54,11 @@ function App() {
                                         rotation={[0, -Math.PI / 2, 0]}
                                         scale={0.04}
                                     />
+                                    <Seagull
+                                        position={[-2, 4, -3]}
+                                        rotation={[0, -Math.PI / 2, 0]}
+                                        scale={0.04}
+                                    />
                                 </Bounds>
                             </PresentationControls>
                             <ContactShadows
