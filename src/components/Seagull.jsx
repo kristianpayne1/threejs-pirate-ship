@@ -26,14 +26,10 @@ function move(ref, { api, origin }) {
 }
 
 function playRandomAnimation(actions) {
-    const randomInterval = Math.random() * (10e3 - 3e3) + 3e3;
     const actionsList = Object.values(actions);
     const randomAction =
         actionsList[Math.floor(Math.random() * actionsList.length)];
     randomAction.reset().play();
-    return setTimeout(() => {
-        playRandomAnimation(actions);
-    }, randomInterval);
 }
 
 export default function Seagull({ position, rotation, scale, ...props }) {
@@ -78,6 +74,14 @@ export default function Seagull({ position, rotation, scale, ...props }) {
         actions["2 flap"].setLoop(LoopOnce);
         actions["2 flap"].clampWhenFinished = true;
         playRandomAnimation(actions);
+        const randomInterval = Math.random() * (10e3 - 3e3) + 3e3;
+        const animationInterval = setInterval(
+            () => playRandomAnimation(actions),
+            randomInterval
+        );
+        return () => {
+            clearInterval(animationInterval);
+        };
     }, [actions, ref, api, position, rotation]);
 
     return (
