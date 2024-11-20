@@ -2,7 +2,7 @@ import { useAnimations, useGLTF } from "@react-three/drei";
 import { useEffect } from "react";
 import { Outlines } from "./Outlines";
 import { animated, easings, useSpring } from "@react-spring/three";
-import { Vector3 } from "three";
+import { Euler, Quaternion, Vector3 } from "three";
 import { useFrame } from "@react-three/fiber";
 
 function getRandomPosition(origin, max = 1) {
@@ -39,14 +39,19 @@ export default function Seagull({ position, rotation, scale, ...props }) {
     const previousPosition = new Vector3(...position);
     const currentPosition = new Vector3();
     const maxRotation = Math.PI / 6;
+    const newRotation = new Euler();
+    const targetQuaternion = new Quaternion();
     useFrame((_, deltaTime) => {
         if (!ref.current) return;
         currentPosition.copy(ref.current.position);
         const distance = currentPosition.sub(previousPosition);
         const velocity = distance.divideScalar(deltaTime);
         previousPosition.copy(ref.current.position);
-        ref.current.rotation.x = -velocity.y * maxRotation;
-        ref.current.rotation.z = -velocity.x * maxRotation;
+        newRotation.copy(ref.current.rotation);
+        newRotation.x = -velocity.y * maxRotation;
+        newRotation.z = -velocity.x * maxRotation;
+        targetQuaternion.setFromEuler(newRotation);
+        ref.current.quaternion.slerp(targetQuaternion, 0.5);
     });
 
     useEffect(() => {
