@@ -2,7 +2,7 @@ import { useAnimations, useGLTF } from "@react-three/drei";
 import { useEffect } from "react";
 import { Outlines } from "./Outlines";
 import { animated, easings, useSpring } from "@react-spring/three";
-import { Euler, Quaternion, Vector3 } from "three";
+import { Euler, LoopOnce, Quaternion, Vector3 } from "three";
 import { useFrame } from "@react-three/fiber";
 
 function getRandomPosition(origin, max = 1) {
@@ -22,6 +22,17 @@ function move(ref, { api, origin, rotationOrigin }) {
     });
 }
 
+function playRandomAnimation(actions) {
+    const randomInterval = Math.random() * (10e3 - 3e3) + 3e3;
+    const actionsList = Object.values(actions);
+    return setTimeout(() => {
+        const randomAction =
+            actionsList[Math.floor(Math.random() * actionsList.length)];
+        randomAction.reset().play();
+        playRandomAnimation(actions);
+    }, randomInterval);
+}
+
 export default function Seagull({ position, rotation, scale, ...props }) {
     const { nodes, materials, animations } = useGLTF("./models/seagull.glb");
     const { ref, actions } = useAnimations(animations);
@@ -31,7 +42,6 @@ export default function Seagull({ position, rotation, scale, ...props }) {
         config: {
             duration: 8e3,
             tension: 180,
-            friction: 12,
             easing: easings.easeInOutBack,
         },
     }));
@@ -51,12 +61,18 @@ export default function Seagull({ position, rotation, scale, ...props }) {
         newRotation.x = -velocity.y * maxRotation;
         newRotation.z = -velocity.x * maxRotation;
         targetQuaternion.setFromEuler(newRotation);
-        ref.current.quaternion.slerp(targetQuaternion, 0.5);
+        ref.current.quaternion.slerp(targetQuaternion, 0.01);
     });
 
     useEffect(() => {
-        actions?.flap.play();
         move(ref, { api, origin: position, rotation });
+        if (!actions) return;
+        actions.flap.setLoop(LoopOnce);
+        actions.flap.clampWhenFinished = true;
+        actions["2 flap"].setLoop(LoopOnce);
+        actions["2 flap"].clampWhenFinished = true;
+        actions.flap.play();
+        playRandomAnimation(actions);
     }, [actions, ref, api, position, rotation]);
 
     return (
