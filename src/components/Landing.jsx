@@ -5,7 +5,12 @@ function Landing() {
     const navigate = useNavigate();
     return (
         <div className="landing-container">
-            <button onClick={() => navigate("/scene")}>Ahoy!</button>
+            <button
+                aria-label={"Enter the experience, me hearty!"}
+                onClick={() => navigate("/scene")}
+            >
+                Ahoy!
+            </button>
         </div>
     );
 }
