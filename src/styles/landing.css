@@ -4,4 +4,36 @@ div.landing-container {
     display: flex;
     justify-content: center;
     align-items: center;
+    color: white;
+    font-family: "IMFellEnglish", sans-serif;
+}
+
+div.landing-container button {
+    color: inherit;
+    font-family: inherit;
+    font-size: 1.2rem;
+
+    height: 4rem;
+    width: 10rem;
+
+    background-color: transparent;
+    cursor: pointer;
+
+    border: white 2px solid;
+    border-right: none;
+    border-left: none;
+    border-top-left-radius: 255px 15px;
+    border-top-right-radius: 15px;
+    border-bottom-right-radius: 225px 15px;
+    border-bottom-left-radius: 15px;
+
+    transition: all 0.1s ease-in-out;
+}
+
+div.landing-container button:hover {
+    border-width: 4px;
+}
+
+div.landing-container button:active {
+    transform: scale(0.95);
 }

@@ -1,3 +1,9 @@
+@font-face {
+    font-family: 'IMFellEnglish';
+    src: url('public/fonts/IMFellEnglish-Italic.ttf') format('truetype');
+    font-style: italic;
+}
+
 html,
 body,
 div#root {

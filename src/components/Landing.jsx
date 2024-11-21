@@ -5,7 +5,7 @@ function Landing() {
     const navigate = useNavigate();
     return (
         <div className="landing-container">
-            <button onClick={() => navigate("/scene")}>Enter</button>
+            <button onClick={() => navigate("/scene")}>Enter, ye dog!</button>
         </div>
     );
 }
