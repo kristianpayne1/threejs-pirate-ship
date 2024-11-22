@@ -27,6 +27,9 @@ function useAmbientSound({
     useEffect(() => {
         if (!buffer || !sound) return;
         sound.setBuffer(buffer);
+        return () => {
+            sound.stop();
+        };
     }, [buffer, sound]);
 
     useEffect(() => {

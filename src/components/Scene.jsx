@@ -8,7 +8,7 @@ import {
 import Water from "./Water.jsx";
 import Ship from "./Ship.jsx";
 import Seagull from "./Seagull.jsx";
-import { Suspense, useEffect, useRef } from "react";
+import { Suspense, useRef } from "react";
 import useAmbientSound from "../hooks/useAmbientSound.jsx";
 import { useAudioListener } from "../hooks/useAudioListener.jsx";
 
@@ -17,16 +17,15 @@ function Scene() {
 
     const audioListener = useAudioListener();
 
-    const sound = useAmbientSound({
+    useAmbientSound({
         url: "./sounds/seagulls-by-the-sea.mp3",
         audioListener,
     });
 
-    useEffect(() => {
-        return () => {
-            sound.stop();
-        };
-    }, [sound]);
+    useAmbientSound({
+        url: "./sounds/squeaky-wood.mp3",
+        audioListener,
+    });
 
     return (
         <Suspense fallback={null}>
