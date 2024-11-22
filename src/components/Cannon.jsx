@@ -29,7 +29,6 @@ function fireCannon(
         QuarksUtil.restart(explosion);
         cannonBallRigidBody.applyImpulse({ x: -0.1, y: 0.025, z: 0.1 }, true);
 
-        console.log(soundFX);
         soundFX.play();
 
         await api.start({
