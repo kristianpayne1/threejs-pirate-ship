@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import ParticleSystem from "./ParticleSystem";
 import { QuarksUtil } from "three.quarks";
 import CannonBall from "./CannonBall";
+import { useAudioListener } from "../hooks/useAudioListener.jsx";
+import PositionalAudio from "./PositionalAudio.jsx";
 
 function resetCannonBall(cannonBallRigidBody, setAnimating) {
     cannonBallRigidBody.resetForces(false);
@@ -14,12 +16,21 @@ function resetCannonBall(cannonBallRigidBody, setAnimating) {
     setAnimating(false);
 }
 
-function fireCannon(setAnimating, api, explosion, cannonBallRigidBody) {
+function fireCannon(
+    setAnimating,
+    api,
+    explosion,
+    cannonBallRigidBody,
+    soundFX
+) {
     return async function () {
         setAnimating(true);
 
         QuarksUtil.restart(explosion);
         cannonBallRigidBody.applyImpulse({ x: -0.1, y: 0.025, z: 0.1 }, true);
+
+        console.log(soundFX);
+        soundFX.play();
 
         await api.start({
             position: [0, 0, -1],
@@ -39,6 +50,9 @@ export default function Cannon({ geometry, position, scale, map, ...props }) {
 
     const explosionRef = useRef();
     const cannonBallRef = useRef();
+    const soundRef = useRef();
+
+    const audioListener = useAudioListener();
 
     useCursor(hovered);
 
@@ -64,6 +78,12 @@ export default function Cannon({ geometry, position, scale, map, ...props }) {
 
     return (
         <group position={position}>
+            <PositionalAudio
+                ref={soundRef}
+                audioListener={audioListener}
+                url={"./sounds/cannonball.mp3"}
+                distance={25}
+            />
             <animated.mesh
                 scale={scale}
                 position={cannonSprings.position}
@@ -76,7 +96,8 @@ export default function Cannon({ geometry, position, scale, map, ...props }) {
                         setAnimating,
                         cannonApi,
                         explosionRef.current,
-                        cannonBallRef.current
+                        cannonBallRef.current,
+                        soundRef.current
                     )
                 }
                 {...props}

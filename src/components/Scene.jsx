@@ -10,12 +10,16 @@ import Ship from "./Ship.jsx";
 import Seagull from "./Seagull.jsx";
 import { Suspense, useEffect, useRef } from "react";
 import useAmbientSound from "../hooks/useAmbientSound.jsx";
+import { useAudioListener } from "../hooks/useAudioListener.jsx";
 
 function Scene() {
     const waterRef = useRef(null);
 
+    const audioListener = useAudioListener();
+
     const sound = useAmbientSound({
         url: "./sounds/seagulls-by-the-sea.mp3",
+        audioListener,
     });
 
     useEffect(() => {
