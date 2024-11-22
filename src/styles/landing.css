@@ -31,10 +31,15 @@ div.landing-container button {
     transition: all 0.1s ease-in-out;
 }
 
-div.landing-container button:hover {
+div.landing-container button:hover, div.landing-container button:focus {
     border-width: 5px;
 }
 
 div.landing-container button:active {
     transform: scale(0.95);
+}
+
+div.landing-container p.disclaimer {
+    position: absolute;
+    bottom: 0.5rem;
 }

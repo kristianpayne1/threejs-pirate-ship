@@ -11,6 +11,7 @@ function Landing() {
             >
                 Ahoy!
             </button>
+            <p className="disclaimer">This is an audio enabled experience</p>
         </div>
     );
 }
