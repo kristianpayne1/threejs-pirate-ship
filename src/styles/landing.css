@@ -4,21 +4,14 @@ div.landing-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    color: white;
-    font-family: "IMFellEnglish", sans-serif;
+
 }
 
 div.landing-container button {
-    color: inherit;
-    font-family: inherit;
     font-size: 1.5rem;
-    font-style: italic;
 
     height: 4rem;
     width: 10rem;
-
-    background-color: transparent;
-    cursor: pointer;
 
     border: white 3px solid;
     border-right: none;
@@ -27,19 +20,13 @@ div.landing-container button {
     border-top-right-radius: 5px;
     border-bottom-right-radius: 225px 15px;
     border-bottom-left-radius: 5px;
-
-    transition: all 0.1s ease-in-out;
 }
 
 div.landing-container button:hover, div.landing-container button:focus {
     border-width: 5px;
 }
 
-div.landing-container button:active {
-    transform: scale(0.95);
-}
-
 div.landing-container p.disclaimer {
     position: absolute;
-    bottom: 0.5rem;
+    bottom: 0;
 }

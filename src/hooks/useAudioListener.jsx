@@ -1,17 +1,21 @@
-import { createContext, useContext, useMemo } from "react";
+import { createContext, useContext, useEffect } from "react";
 import { AudioListener } from "three";
 
-const AudioContext = createContext(null);
+const audioListener = new AudioListener();
+const AudioContext = createContext(audioListener);
 
 export function useAudioListener() {
-    return useContext(AudioListener);
+    return useContext(AudioContext);
 }
 
-function AudioListenerContextProvider({ children }) {
-    const listener = useMemo(() => new AudioListener(), []);
+function AudioListenerContextProvider({ children, enabled = true }) {
+    useEffect(() => {
+        if (enabled) audioListener.setMasterVolume(1);
+        else audioListener.setMasterVolume(0);
+    }, [enabled]);
 
     return (
-        <AudioContext.Provider value={{ listener }}>
+        <AudioContext.Provider value={audioListener}>
             {children}
         </AudioContext.Provider>
     );

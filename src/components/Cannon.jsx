@@ -81,7 +81,7 @@ export default function Cannon({ geometry, position, scale, map, ...props }) {
                 ref={soundRef}
                 audioListener={audioListener}
                 url={"./sounds/cannonball.mp3"}
-                distance={25}
+                distance={1}
             />
             <animated.mesh
                 scale={scale}

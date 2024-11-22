@@ -10,8 +10,30 @@ div#root {
     height: 100%;
     margin: 0;
     background-color: #62d3ff;
+    color: white;
+    font-family: "IMFellEnglish", sans-serif;
 }
 
 canvas {
     touch-action: none;
 }
+
+button {
+    color: inherit;
+    font-family: inherit;
+
+    background-color: transparent;
+    cursor: pointer;
+    border: none;
+
+    height: 2rem;
+
+    font-size: 1.25rem;
+
+    transition: all 0.1s ease-in-out;
+}
+
+button:active {
+    transform: scale(0.95);
+}
+

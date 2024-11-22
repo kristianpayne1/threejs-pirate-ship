@@ -1,10 +1,14 @@
 import { Canvas } from "@react-three/fiber";
 import Scene from "./Scene.jsx";
-import { Loader, Stats } from "@react-three/drei";
+import { Loader } from "@react-three/drei";
+import AudioListenerContextProvider from "../hooks/useAudioListener.jsx";
+import "../styles/experience.css";
+import { useState } from "react";
 
 function Experience() {
+    const [audioEnabled, setAudioEnabled] = useState(true);
     return (
-        <>
+        <AudioListenerContextProvider enabled={audioEnabled}>
             <Canvas
                 flat
                 shadows
@@ -14,8 +18,13 @@ function Experience() {
                 <Scene />
             </Canvas>
             <Loader />
-            <Stats />
-        </>
+            <button
+                className="sound-toggle"
+                onClick={() => setAudioEnabled((state) => !state)}
+            >
+                Audio is {audioEnabled ? "on" : "off"}
+            </button>
+        </AudioListenerContextProvider>
     );
 }
 

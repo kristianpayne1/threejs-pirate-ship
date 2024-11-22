@@ -101,7 +101,7 @@ export default function Seagull({ position, rotation, scale, ...props }) {
                             material={materials.White}
                             skeleton={nodes.Cylinder001.skeleton}
                         >
-                            <Outlines thickness={0.55} />
+                            <Outlines thickness={0.4} />
                         </skinnedMesh>
                         <skinnedMesh
                             geometry={nodes.Cylinder001_1.geometry}
