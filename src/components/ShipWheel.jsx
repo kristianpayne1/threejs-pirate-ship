@@ -1,15 +1,19 @@
-import { useState } from "react";
-import { useSpring, animated, easings } from "@react-spring/three";
+import { useRef, useState } from "react";
+import { animated, easings, useSpring } from "@react-spring/three";
 import { Box, useCursor } from "@react-three/drei";
 import { Outlines } from "./Outlines";
+import PositionalAudio from "./PositionalAudio.jsx";
+import { useAudioListener } from "../hooks/useAudioListener.jsx";
 
-function spinWheelAnimation(api) {
+function spinWheelAnimation(api, soundSFX) {
     return async function () {
         api.stop();
+        soundSFX.play();
         await api.start({
-            rotation: [0, 0, Math.PI * 4],
+            rotation: [0, 0, Math.PI * 5],
         })[0];
 
+        soundSFX.play();
         await api.start({
             rotation: [0, 0, 0],
         })[0];
@@ -25,7 +29,11 @@ function spinWheelAnimation(api) {
 export default function ShipWheel({ map, geometry }) {
     const [hovered, setHovered] = useState(false);
 
+    const spinSFXRef = useRef();
+
     useCursor(hovered);
+
+    const audioListener = useAudioListener();
 
     const [shipWheelSprings, shipWheelApi] = useSpring(
         () => ({
@@ -45,6 +53,11 @@ export default function ShipWheel({ map, geometry }) {
 
     return (
         <group position={[0, 4.5, -4.5]}>
+            <PositionalAudio
+                ref={spinSFXRef}
+                url="sounds/wheel-spin1.mp3"
+                audioListener={audioListener}
+            />
             <animated.mesh
                 scale={1.75}
                 geometry={geometry}
@@ -55,7 +68,10 @@ export default function ShipWheel({ map, geometry }) {
             </animated.mesh>
             <Box
                 args={[1.5, 1.5, 0.5]}
-                onPointerDown={spinWheelAnimation(shipWheelApi)}
+                onPointerDown={spinWheelAnimation(
+                    shipWheelApi,
+                    spinSFXRef.current
+                )}
                 onPointerOver={() => setHovered(true)}
                 onPointerOut={() => setHovered(false)}
             >
