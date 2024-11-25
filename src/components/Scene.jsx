@@ -22,11 +22,6 @@ function Scene() {
         audioListener,
     });
 
-    useAmbientSound({
-        url: "./sounds/squeaky-wood.mp3",
-        audioListener,
-    });
-
     return (
         <Suspense fallback={null}>
             <Physics>
